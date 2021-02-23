@@ -25,6 +25,5 @@ import page_loader
 )
 def test_downloader_codes(url, result):
     with tempfile.TemporaryDirectory() as tmp_dir_name:
-        tmp_path = page_loader.download(url, tmp_dir_name)
-
-    assert tmp_path == 'error was occurred. http code is {}'.format(result)
+        with pytest.raises(ValueError):
+            page_loader.download(url, tmp_dir_name)
