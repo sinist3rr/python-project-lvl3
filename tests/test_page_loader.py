@@ -3,35 +3,36 @@
 """Various page_loader tests."""
 
 import pytest
+import tempfile
+import os
 import page_loader
 
 
 @pytest.mark.parametrize(
-    'url,output_dir,result_line,result',
+    'url,result',
     [
         (
             'http://example.com',
-            '/tmp/',
-            '/tmp/example-com.html',
-            'example-com'
+            'example-com.html'
         ),
         (
-            'https://ru.hexlet.io/courses',
-            '/tmp/',
-            '/tmp/ru-hexlet-io-courses.html',
-            'ru-hexlet-io-courses'
+            'https://httpbin.org/html',
+            'httpbin-org.html'
         ),
         (
             'http://example.com/index.html',
-            '/tmp/',
-            '/tmp/example-com-index.html',
-            'example-com-index'
+            'example-com-index.html'
         )]
 )
-def test_page_loader(url, output_dir, result_line, result):
-    filepath = 'tests/fixtures/{}.html'.format(result)
-    # with open(filepath) as fp:
-    # result_line = fp.read()
+def test_page_loader(url, result):
+    filepath = 'tests/fixtures/{}'.format(result)
+    with open(filepath) as fp:
+        result_file = fp.read()
 
-    # assert page_loader.download(url, output_dir) == result_line
-    assert page_loader.download(url, output_dir) == result_line
+    with tempfile.TemporaryDirectory() as tmp_dir_name:
+        tmp_path = page_loader.download(url, tmp_dir_name)
+        with open(tmp_path) as tmp_html_file:
+            tmp_html_result_file = tmp_html_file.read()
+
+    assert tmp_html_result_file == result_file
+    assert tmp_path == os.path.join(tmp_dir_name, result)

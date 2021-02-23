@@ -22,9 +22,16 @@ def add_extension(string):
 
 def download(URL, OUTPUT_DIR):
     r = requests.get(URL)  # create HTTP response object
-    resulting_file_name = add_extension(replace_to_dash(remove_scheme(URL)))
-    complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
+    if r.status_code == 200:
+        resulting_file_name = add_extension(
+            replace_to_dash(
+                remove_scheme(URL)
+            )
+        )
+        complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
 
-    with open(complete_path, 'wb') as f:
-        f.write(r.content)
-    return complete_path
+        with open(complete_path, 'wb') as f:
+            f.write(r.content)
+        return complete_path
+    else:
+        return 'error was occurred. http code is {}'.format(r.status_code)
