@@ -39,6 +39,9 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
         )
         complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
 
-        with open(complete_path, 'wb') as f:
-            f.write(response.content)
-        return complete_path
+        try:
+            with open(complete_path, 'wb') as f:
+                f.write(response.content)
+            return complete_path
+        except OSError:
+            raise ValueError("Directory is not available.")
