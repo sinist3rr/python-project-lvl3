@@ -8,3 +8,17 @@
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/sinist3rr/python-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/sinist3rr/python-project-lvl3/actions)
+
+
+### How to install package
+
+```
+pip install --user git+https://github.com/sinist3rr/python-project-lvl3.git
+```
+
+### asciinema
+
+**page_loader sigle page**\
+
+[![page_loader-basic](https://asciinema.org/a/LR9b8deDQ5WrJt8ThuUXamlEO.svg)](https://asciinema.org/a/LR9b8deDQ5WrJt8ThuUXamlEO)
+
