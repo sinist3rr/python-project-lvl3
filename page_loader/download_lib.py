@@ -1,24 +1,30 @@
 import requests
-from requests.exceptions import HTTPError
 import re
 import os
+from requests.exceptions import HTTPError
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
 
 
-def remove_scheme(URL: str) -> str:
-    pattern = re.compile(r"https?://?")
-    return pattern.sub('', URL).strip().strip('/')
-
-
-def replace_to_dash(string) -> str:
+def replace_to_dash(url: str) -> str:
     pattern = re.compile('[^a-zA-Z0-9]')
-    return re.sub(pattern, '-', string)
+    return re.sub(pattern, '-', url)
 
 
-def add_extension(string) -> str:
-    if string.endswith('html'):
-        return '{}.html'.format(string[:-5])
+def format_url(url: str, out_type: str) -> str:
+    domain = urlparse(url).netloc
+    path = urlparse(url).path
+    req, ext = os.path.splitext(path)
+    formatted_url = replace_to_dash('{}{}'.format(domain, req))
+
+    if out_type == 'file':
+        if not ext:
+            ext = '.html'
+        return '{}{}'.format(formatted_url, ext)
+    elif out_type == 'dir':
+        return '{}{}'.format(formatted_url, '_files')
     else:
-        return '{}.html'.format(string)
+        return 'Wrong type - {}'.format(out_type)
 
 
 def download(URL: str, OUTPUT_DIR: str) -> str:
@@ -32,16 +38,30 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
     except Exception as err:
         raise ValueError('Other error occurred: {}'.format(err))
     else:
-        resulting_file_name = add_extension(
-            replace_to_dash(
-                remove_scheme(URL)
-            )
-        )
+        content = response.content
+        soup = BeautifulSoup(content, 'html.parser')
+        resulting_file_name = format_url(URL, 'file')
         complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
+        image_tags = soup.findAll('img')
+
+        if image_tags:
+            dir_name = format_url(URL, 'dir')
+            dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
+            if not os.path.exists(dir_full_path):
+                os.mkdir(dir_full_path)
+
+            for image_link in image_tags:
+                link = urljoin(URL, image_link.get('src'))
+                response = requests.get(link)
+                image_name = format_url(link, 'file')
+                full_file_path = '{}/{}'.format(dir_full_path, image_name)
+                image_link['src'] = full_file_path
+                with open(full_file_path, 'wb') as file:
+                    file.write(response.content)
 
         try:
-            with open(complete_path, 'wb') as f:
-                f.write(response.content)
+            with open(complete_path, "w", encoding='utf-8') as file:
+                file.write(str(soup.prettify()))
             return complete_path
         except OSError:
             raise ValueError("Directory is not available.")

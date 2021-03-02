@@ -17,7 +17,7 @@ import page_loader
         ),
         (
             'https://httpbin.org/html',
-            'httpbin-org.html'
+            'httpbin-org-html.html'
         ),
         (
             'http://example.com/index.html',
