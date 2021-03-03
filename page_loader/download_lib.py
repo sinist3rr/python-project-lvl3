@@ -45,7 +45,8 @@ def download_img(URL, OUTPUT_DIR, image_tags):
         response = requests.get(link)
         image_name = format_url(link, 'file')
         full_file_path = '{}/{}'.format(dir_full_path, image_name)
-        image_link['src'] = full_file_path
+        img_file_path = '{}/{}'.format(dir_name, image_name)
+        image_link['src'] = img_file_path
         with open(full_file_path, 'wb') as file:
             file.write(response.content)
 
