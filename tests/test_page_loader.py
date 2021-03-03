@@ -3,6 +3,7 @@
 """Various page_loader tests."""
 
 import pytest
+import requests
 import tempfile
 import os
 import page_loader
@@ -24,12 +25,13 @@ import page_loader
             'example-com-index.html'
         )]
 )
-def test_page_loader(url, result):
+def test_page_loader(requests_mock, url, result):
     filepath = 'tests/fixtures/{}'.format(result)
     with open(filepath) as fp:
         result_file = fp.read()
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
+        requests_mock.get(url, text=result_file)
         tmp_path = page_loader.download(url, tmp_dir_name)
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
