@@ -6,6 +6,7 @@ import pytest
 import requests
 import tempfile
 import os
+import filecmp
 import page_loader
 from bs4 import BeautifulSoup
 
@@ -37,6 +38,9 @@ def test_page_loader(requests_mock):
                 img_file = im.read()
             requests_mock.get('https://digital.ai/the-ultimate-devops-tool-chest/img/{}'.format(image), content=img_file)
         tmp_path = page_loader.download(url, tmp_dir_name)
+        assert filecmp.cmp('tests/fixtures/img/git.png',
+                           tmp_dir_name + '/digital-ai-the-ultimate-devops-tool-chest-open-source_files/digital-ai-the-ultimate-devops-tool-chest-img-git.png',
+                           shallow=False)
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
 
