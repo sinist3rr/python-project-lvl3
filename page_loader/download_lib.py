@@ -40,17 +40,14 @@ def download_img(URL, OUTPUT_DIR, image_tags):
     if not os.path.exists(dir_full_path):
         os.mkdir(dir_full_path)
 
-    for i, image_link in enumerate(image_tags):
-        if i > 2:
-            break
-        else:
-            link = urljoin(URL, image_link.get('src'))
-            response = requests.get(link)
-            image_name = format_url(link, 'file')
-            full_file_path = '{}/{}'.format(dir_full_path, image_name)
-            image_link['src'] = full_file_path
-            with open(full_file_path, 'wb') as file:
-                file.write(response.content)
+    for image_link in image_tags:
+        link = urljoin(URL, image_link.get('src'))
+        response = requests.get(link)
+        image_name = format_url(link, 'file')
+        full_file_path = '{}/{}'.format(dir_full_path, image_name)
+        image_link['src'] = full_file_path
+        with open(full_file_path, 'wb') as file:
+            file.write(response.content)
 
 
 def format_url(url: str, out_type: str) -> str:
