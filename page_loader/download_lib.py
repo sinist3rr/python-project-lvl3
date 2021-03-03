@@ -6,43 +6,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
 
-def replace_to_dash(url: str) -> str:
-    pattern = re.compile('[^a-zA-Z0-9]')
-    return re.sub(pattern, '-', url)
-
-
-def format_url(url: str, out_type: str) -> str:
-    domain = urlparse(url).netloc
-    path = urlparse(url).path
-    req, ext = os.path.splitext(path)
-    formatted_url = replace_to_dash('{}{}'.format(domain, req))
-
-    if out_type == 'file':
-        if not ext:
-            ext = '.html'
-        return '{}{}'.format(formatted_url, ext)
-    elif out_type == 'dir':
-        return '{}{}'.format(formatted_url, '_files')
-    else:
-        return 'Wrong type - {}'.format(out_type)
-
-
-def download_img(URL, OUTPUT_DIR, image_tags):
-    dir_name = format_url(URL, 'dir')
-    dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
-    if not os.path.exists(dir_full_path):
-        os.mkdir(dir_full_path)
-
-    for image_link in image_tags:
-        link = urljoin(URL, image_link.get('src'))
-        response = requests.get(link)
-        image_name = format_url(link, 'file')
-        full_file_path = '{}/{}'.format(dir_full_path, image_name)
-        image_link['src'] = full_file_path
-        with open(full_file_path, 'wb') as file:
-            file.write(response.content)
-
-
 def download(URL: str, OUTPUT_DIR: str) -> str:
     try:
         response = requests.get(URL)  # create HTTP response object
@@ -69,3 +32,43 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
         return complete_path
     except OSError:
         raise ValueError("Directory is not available.")
+
+
+def download_img(URL, OUTPUT_DIR, image_tags):
+    dir_name = format_url(URL, 'dir')
+    dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
+    if not os.path.exists(dir_full_path):
+        os.mkdir(dir_full_path)
+
+    for i, image_link in enumerate(image_tags):
+        if i > 2:
+            break
+        else:
+            link = urljoin(URL, image_link.get('src'))
+            response = requests.get(link)
+            image_name = format_url(link, 'file')
+            full_file_path = '{}/{}'.format(dir_full_path, image_name)
+            image_link['src'] = full_file_path
+            with open(full_file_path, 'wb') as file:
+                file.write(response.content)
+
+
+def format_url(url: str, out_type: str) -> str:
+    domain = urlparse(url).netloc
+    path = urlparse(url).path
+    req, ext = os.path.splitext(path)
+    formatted_url = replace_to_dash('{}{}'.format(domain, req))
+
+    if out_type == 'file':
+        if not ext:
+            ext = '.html'
+        return '{}{}'.format(formatted_url, ext)
+    elif out_type == 'dir':
+        return '{}{}'.format(formatted_url, '_files')
+    else:
+        return 'Wrong type - {}'.format(out_type)
+
+
+def replace_to_dash(url: str) -> str:
+    pattern = re.compile('[^a-zA-Z0-9]')
+    return re.sub(pattern, '-', url)
