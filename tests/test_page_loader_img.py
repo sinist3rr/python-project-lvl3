@@ -3,9 +3,7 @@
 """Various page_loader tests."""
 
 import pytest
-import requests
 import tempfile
-import os
 import filecmp
 import page_loader
 from bs4 import BeautifulSoup
@@ -13,9 +11,9 @@ from bs4 import BeautifulSoup
 
 def test_page_loader(requests_mock):
     url = 'https://digital.ai/the-ultimate-devops-tool-chest/open-source'
+    img_path = 'digital-ai-the-ultimate-devops-tool-chest-open-source_files/digital-ai-the-ultimate-devops-tool-chest-img-'
     images = (
         'Logo-Dark.png',
-        'Logo-Light.svg',
         'docker.png',
         'git.png',
         'gitlab.png',
@@ -37,10 +35,15 @@ def test_page_loader(requests_mock):
             with open('tests/fixtures/img/{}'.format(image), "rb") as im:
                 img_file = im.read()
             requests_mock.get('https://digital.ai/the-ultimate-devops-tool-chest/img/{}'.format(image), content=img_file)
+
         tmp_path = page_loader.download(url, tmp_dir_name)
-        assert filecmp.cmp('tests/fixtures/img/git.png',
-                           tmp_dir_name + '/digital-ai-the-ultimate-devops-tool-chest-open-source_files/digital-ai-the-ultimate-devops-tool-chest-img-git.png',
-                           shallow=False)
+
+        for image in images:
+            assert filecmp.cmp('tests/fixtures/img/{}'.format(image),
+                               '{}/{}{}'.format(tmp_dir_name, img_path, image),
+                               shallow=False
+                               )
+
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
 

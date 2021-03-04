@@ -6,6 +6,7 @@ test:
 
 lint:
 	poetry run flake8 page_loader
+	poetry run mypy page_loader
 
 selfcheck:
 	poetry check

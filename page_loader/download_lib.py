@@ -2,7 +2,7 @@ import requests
 import re
 import os
 from requests.exceptions import HTTPError
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore
 from urllib.parse import urljoin, urlparse
 
 
