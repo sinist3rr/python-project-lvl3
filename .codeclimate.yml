@@ -1,4 +1,3 @@
 exclude_paths:
  - "*page_loader/scripts/__init__.py*"
- - "*page_loader/cli.py*"
  - "*tests/*"
