@@ -34,7 +34,7 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
         raise ValueError("Directory is not available.")
 
 
-def download_img(URL, OUTPUT_DIR, image_tags):
+def download_img(URL: str, OUTPUT_DIR: str, image_tags: list):
     dir_name = format_url(URL, 'dir')
     dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
     if not os.path.exists(dir_full_path):
