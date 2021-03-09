@@ -10,10 +10,9 @@ from bs4 import BeautifulSoup
 
 
 def test_page_loader(requests_mock):
-    url = 'https://digital.ai/the-ultimate-devops-tool-chest/open-source'
-    img_path = 'digital-ai-the-ultimate-devops-tool-chest-open-source_files/digital-ai-the-ultimate-devops-tool-chest-img-'
+    url = 'https://digital.ai/devops-tool-chest/open-source'
+    img_path = 'digital-ai-devops-tool-chest-open-source_files/digital-ai-devops-tool-chest-img-'
     images = (
-        'Logo-Dark.png',
         'docker.png',
         'git.png',
         'gitlab.png',
@@ -23,9 +22,9 @@ def test_page_loader(requests_mock):
         'vagrant.png'
     )
 
-    with open('tests/fixtures/digital-ai-before.html') as fp:
+    with open('tests/fixtures/digital-ai-img-before.html') as fp:
         original_file = fp.read()
-    with open('tests/fixtures/digital-ai-after-img.html') as fp:
+    with open('tests/fixtures/digital-ai-img-after.html') as fp:
         result_file = fp.read()
     soup = BeautifulSoup(result_file, 'html.parser')
 
@@ -34,7 +33,7 @@ def test_page_loader(requests_mock):
         for image in images:
             with open('tests/fixtures/img/{}'.format(image), "rb") as im:
                 img_file = im.read()
-            requests_mock.get('https://digital.ai/the-ultimate-devops-tool-chest/img/{}'.format(image), content=img_file)
+            requests_mock.get('https://digital.ai/devops-tool-chest/img/{}'.format(image), content=img_file)
 
         tmp_path = page_loader.download(url, tmp_dir_name)
 
