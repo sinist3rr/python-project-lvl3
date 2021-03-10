@@ -44,7 +44,7 @@ def download_res(URL: str, OUTPUT_DIR: str, tags: list, location: str = 'src'):
         os.mkdir(dir_full_path)
 
     for tag in tags:
-        if check_domain(URL, tag.get(location)):
+        if check_domain(URL, tag.get(location)) and tag.get(location):
             link = urljoin(URL, tag.get(location))
             response = requests.get(link)
             res_name = format_url(link, 'file')
