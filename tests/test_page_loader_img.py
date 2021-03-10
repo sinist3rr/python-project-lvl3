@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 def test_page_loader(requests_mock):
     url = 'https://digital.ai/devops-tool-chest/open-source'
     img_path = 'digital-ai-devops-tool-chest-open-source_files/digital-ai-devops-tool-chest-img-'
+    css_path = 'digital-ai-devops-tool-chest-open-source_files/digital-ai-css-css-Tz2Slcsk93w.css'
+    js_path = 'digital-ai-devops-tool-chest-open-source_files/digital-ai-js-js-Foa5XQDLxY.js'
     images = (
         'docker.png',
         'git.png',
@@ -35,6 +37,13 @@ def test_page_loader(requests_mock):
                 img_file = im.read()
             requests_mock.get('https://digital.ai/devops-tool-chest/img/{}'.format(image), content=img_file)
 
+        with open('tests/fixtures/css/css_Tz2Slcsk93w.css', "rb") as css:
+            css_file = css.read()
+        with open('tests/fixtures/js/js_Foa5XQDLxY.js', "rb") as js:
+            js_file = js.read()
+        requests_mock.get('https://digital.ai/css/css_Tz2Slcsk93w.css', content=css_file)
+        requests_mock.get('https://digital.ai/js/js_Foa5XQDLxY.js', content=js_file)
+
         tmp_path = page_loader.download(url, tmp_dir_name)
 
         for image in images:
@@ -42,6 +51,15 @@ def test_page_loader(requests_mock):
                                '{}/{}{}'.format(tmp_dir_name, img_path, image),
                                shallow=False
                                )
+
+        assert filecmp.cmp('tests/fixtures/css/css_Tz2Slcsk93w.css',
+                           '{}/{}'.format(tmp_dir_name, css_path),
+                           shallow=False
+                           )
+        assert filecmp.cmp('tests/fixtures/js/js_Foa5XQDLxY.js',
+                           '{}/{}'.format(tmp_dir_name, js_path),
+                           shallow=False
+                           )
 
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
