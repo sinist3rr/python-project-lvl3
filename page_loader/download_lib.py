@@ -19,15 +19,17 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
 
     content = response.content
     soup = BeautifulSoup(content, 'html.parser')
-    resulting_file_name = format_url(URL, 'file')
+    clean_url = URL.strip('/')
+    resulting_file_name = format_url(clean_url, 'file')
     complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
+
     image_tags = soup.findAll('img')
     link_tags = soup.findAll('link')
     script_tags = soup.findAll('script')
 
-    download_res(URL, OUTPUT_DIR, image_tags)
-    download_res(URL, OUTPUT_DIR, link_tags, 'href')
-    download_res(URL, OUTPUT_DIR, script_tags)
+    download_res(clean_url, OUTPUT_DIR, image_tags)
+    download_res(clean_url, OUTPUT_DIR, link_tags, 'href')
+    download_res(clean_url, OUTPUT_DIR, script_tags)
 
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
@@ -37,15 +39,15 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
         raise ValueError("Directory is not available.")
 
 
-def download_res(URL: str, OUTPUT_DIR: str, tags: list, location: str = 'src'):
-    dir_name = format_url(URL, 'dir')
+def download_res(url: str, OUTPUT_DIR: str, tags: list, location: str = 'src'):
+    dir_name = format_url(url, 'dir')
     dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
     if not os.path.exists(dir_full_path):
         os.mkdir(dir_full_path)
 
     for tag in tags:
-        if check_domain(URL, tag.get(location)) and tag.get(location):
-            link = urljoin(URL, tag.get(location))
+        if check_domain(url, tag.get(location)):
+            link = urljoin(url, tag.get(location))
             response = requests.get(link)
             res_name = format_url(link, 'file')
             full_file_path = '{}/{}'.format(dir_full_path, res_name)
@@ -79,6 +81,9 @@ def replace_to_dash(url: str) -> str:
 
 
 def check_domain(base_url: str, resource_url: str) -> bool:
+    if not resource_url:
+        return False
+
     main_domain = urlparse(base_url).hostname
     resource_domain = urlparse(resource_url).hostname
 
