@@ -46,19 +46,19 @@ def download_res(url: str, OUTPUT_DIR: str, tags: list, location: str = 'src'):
         os.mkdir(dir_full_path)
 
     for tag in tags:
-        if check_domain(url, tag.get(location)):
-            link = urljoin(url, tag.get(location))
-            res_name = format_url(link, 'file')
-            full_file_path = '{}/{}'.format(dir_full_path, res_name)
-            res_file_path = '{}/{}'.format(dir_name, res_name)
-            tag[location] = res_file_path
-            with requests.get(link, stream=True) as r:
-                r.raise_for_status()
-                with open(full_file_path, 'wb') as file:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        file.write(chunk)
-        else:
+        if not check_domain(url, tag.get(location)):
             continue
+
+        link = urljoin(url, tag.get(location))
+        res_name = format_url(link, 'file')
+        full_file_path = '{}/{}'.format(dir_full_path, res_name)
+        res_file_path = '{}/{}'.format(dir_name, res_name)
+        tag[location] = res_file_path
+        with requests.get(link, stream=True) as r:
+            r.raise_for_status()
+            with open(full_file_path, 'wb') as file:
+                for chunk in r.iter_content(chunk_size=8192):
+                    file.write(chunk)
 
 
 def format_url(url: str, out_type: str) -> str:
