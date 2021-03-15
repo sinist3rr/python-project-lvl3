@@ -12,8 +12,15 @@ def prompt_args():
                         '--output [dir]',
                         default=os.getcwd(),
                         help="output dir",
-                        dest='OUTPUT'
+                        dest='output'
                         )
-    parser.add_argument(dest='URL')
+    parser.add_argument('--verbose',
+                        '-v',
+                        action='count',
+                        dest='verbosity',
+                        default=0,
+                        help="verbosity level"
+                        )
+    parser.add_argument(dest='url')
     parser._optionals.title = "Options"
     return parser

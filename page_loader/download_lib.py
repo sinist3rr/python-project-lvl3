@@ -1,14 +1,19 @@
 import requests
 import os
+import logging
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup  # type: ignore
 from page_loader import url_parser  # type: ignore
 from urllib.parse import urljoin
 
 
-def download(URL: str, OUTPUT_DIR: str) -> str:
+logger = logging.getLogger(__name__)
+
+
+def download(url: str, output_dir: str) -> str:
     try:
-        response = requests.get(URL)  # create HTTP response object
+        response = requests.get(url)  # create HTTP response object
+        logger.info('Http response code %s', response.status_code)
         # If the response was successful, no Exception will be raised
         response.raise_for_status()
 
@@ -18,32 +23,40 @@ def download(URL: str, OUTPUT_DIR: str) -> str:
         raise ValueError('Other error occurred: {}'.format(err))
 
     content = response.content
+    logger.debug('Full http response body %s', content)
     soup = BeautifulSoup(content, 'html.parser')
-    clean_url = URL.strip('/')
+    logger.debug('Parsed html body %s', soup)
+    clean_url = url.strip('/')
     resulting_file_name = url_parser.format_url(clean_url, 'file')
-    complete_path = os.path.join(OUTPUT_DIR, resulting_file_name)
+    complete_path = os.path.join(output_dir, resulting_file_name)
 
     image_tags = soup.findAll('img')
     link_tags = soup.findAll('link')
     script_tags = soup.findAll('script')
 
-    download_res(clean_url, OUTPUT_DIR, image_tags)
-    download_res(clean_url, OUTPUT_DIR, link_tags, 'href')
-    download_res(clean_url, OUTPUT_DIR, script_tags)
+    download_res(clean_url, output_dir, image_tags)
+    download_res(clean_url, output_dir, link_tags, 'href')
+    download_res(clean_url, output_dir, script_tags)
 
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
             file.write(str(soup.prettify()))
         return complete_path
     except OSError:
+        logger.exception('Failed to write data into %s', complete_path)
         raise ValueError("Directory is not available.")
 
 
-def download_res(url: str, OUTPUT_DIR: str, tags: list, location: str = 'src'):
+def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
     dir_name = url_parser.format_url(url, 'dir')
-    dir_full_path = os.path.join(OUTPUT_DIR, dir_name)
+    dir_full_path = os.path.join(output_dir, dir_name)
     if not os.path.exists(dir_full_path):
-        os.mkdir(dir_full_path)
+        try:
+            os.mkdir(dir_full_path)
+            logger.info('Successfully created directory %s', dir_full_path)
+        except OSError:
+            logger.error('Failed to write data into %s', dir_full_path)
+            raise ValueError("Directory is not available.")
 
     for tag in tags:
         if not url_parser.check_domain(url, tag.get(location)):
