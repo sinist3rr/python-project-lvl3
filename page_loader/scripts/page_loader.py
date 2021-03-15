@@ -16,7 +16,7 @@ def main():
     }
 
     args = prompt_args().parse_args()
-    logging.config.dictConfig(generate_logger_config(log_levels[args.verbosity]))
+    logging.config.dictConfig(generate_logger_config(log_levels[args.verbosity]))  # noqa: E501
 
     try:
         print(download(args.url, args.output))
