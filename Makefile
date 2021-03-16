@@ -2,7 +2,7 @@ install:
 	@poetry install
 
 test:
-	poetry run pytest --cov=page_loader tests/ --cov-report xml
+	poetry run pytest --cov=page_loader tests/ --cov-report xml --cov-report html
 
 lint:
 	poetry run flake8 page_loader
