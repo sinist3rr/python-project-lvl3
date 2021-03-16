@@ -34,6 +34,10 @@ def download(url: str, output_dir: str) -> str:
     link_tags = soup.findAll('link')
     script_tags = soup.findAll('script')
 
+    logger.debug('All img tags body %s', image_tags)
+    logger.debug('All link tags %s', link_tags)
+    logger.debug('All script %s', script_tags)
+
     download_res(clean_url, output_dir, image_tags)
     download_res(clean_url, output_dir, link_tags, 'href')
     download_res(clean_url, output_dir, script_tags)
@@ -41,9 +45,10 @@ def download(url: str, output_dir: str) -> str:
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
             file.write(str(soup.prettify()))
+            logger.info('Successfully save file %s', complete_path)
         return complete_path
     except OSError:
-        logger.exception('Failed to write data into %s', complete_path)
+        logger.error('Failed to write data into %s', complete_path)
         raise ValueError("Directory is not available.")
 
 
@@ -69,6 +74,7 @@ def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
         tag[location] = res_file_path
         with requests.get(link, stream=True) as r:
             r.raise_for_status()
+            logger.info('Saving file %s', full_file_path)
             with open(full_file_path, 'wb') as file:
                 for chunk in r.iter_content(chunk_size=8192):
                     file.write(chunk)

@@ -8,11 +8,10 @@ from page_loader.cli import prompt_args
 
 def main():
     log_levels = {
-        0: logging.CRITICAL,
-        1: logging.ERROR,
-        2: logging.WARN,
-        3: logging.INFO,
-        4: logging.DEBUG,
+        0: logging.ERROR,
+        1: logging.WARN,
+        2: logging.INFO,
+        3: logging.DEBUG,
     }
 
     args = prompt_args().parse_args()

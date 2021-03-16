@@ -21,7 +21,11 @@ def generate_logger_config(level: str) -> dict:
                 'level': level,
                 'handlers': ['console']
                 # 'propagate': False
-                }
+                },
+            'urllib3': {
+                'level': level,
+                'handlers': ['console']
+            }
             },
         }
     return logger_config
