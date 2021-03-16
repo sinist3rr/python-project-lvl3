@@ -1,4 +1,5 @@
 [run]
 omit =
     page_loader/cli.py
+    page_loader/logger_config.py
     page_loader/scripts/page_loader.py
