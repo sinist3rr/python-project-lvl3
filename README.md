@@ -27,3 +27,6 @@ pip install --user git+https://github.com/sinist3rr/python-project-lvl3.git
 **page_loader page multiple resources**\
 [![page_loader-mrs](https://asciinema.org/a/EaGl4Rk45WsXAI3cHH9LCO5lR.svg)](https://asciinema.org/a/EaGl4Rk45WsXAI3cHH9LCO5lR)
 
+**page_loader page verbose**\
+[![page_loader-logger](https://asciinema.org/a/aR4eENKDCQMID9Bo2tpoP1oSF.svg)](https://asciinema.org/a/aR4eENKDCQMID9Bo2tpoP1oSF)
+
