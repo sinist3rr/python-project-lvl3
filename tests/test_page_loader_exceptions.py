@@ -12,3 +12,5 @@ import page_loader
 def test_page_loader():
     with pytest.raises(ValueError):
         page_loader.download('http://example.com', '/tmp1')
+    with pytest.raises(ValueError):
+        page_loader.download('https://httpbin11.org/', '/tmp')
