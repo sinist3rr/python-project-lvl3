@@ -41,9 +41,12 @@ def download(url: str, output_dir: str) -> str:
     logger.debug('All link tags %s', link_tags)
     logger.debug('All script %s', script_tags)
 
-    download_res(clean_url, output_dir, image_tags)
-    download_res(clean_url, output_dir, link_tags, 'href')
-    download_res(clean_url, output_dir, script_tags)
+    if image_tags:
+        download_res(clean_url, output_dir, image_tags)
+    if link_tags:
+        download_res(clean_url, output_dir, link_tags, 'href')
+    if script_tags:
+        download_res(clean_url, output_dir, script_tags)
 
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
