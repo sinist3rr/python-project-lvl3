@@ -21,8 +21,7 @@ def main():
     try:
         print(download(args.url, args.output))
         sys.exit(0)
-    except ValueError as error:
-        print(error)
+    except ValueError:
         sys.exit(1)
 
 
