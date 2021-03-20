@@ -19,11 +19,11 @@ def download(url: str, output_dir: str) -> str:
 
     except HTTPError as http_err:
         logger.error('HTTP error occurred: %s', http_err)
-        raise ValueError
+        raise ValueError('HTTP error occurred: {}'.format(http_err))
 
     except Exception as err:
         logger.error('Other error occurred: %s', err)
-        raise ValueError
+        raise ValueError('Other error occurred: {}'.format(err))
 
     content = response.content
     logger.debug('Full http response body %s', content)
@@ -55,7 +55,7 @@ def download(url: str, output_dir: str) -> str:
         return complete_path
     except OSError:
         logger.error('Failed to write data into %s', complete_path)
-        raise ValueError
+        raise ValueError("Directory is not available.")
 
 
 def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
@@ -67,7 +67,7 @@ def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
             logger.info('Successfully created directory %s', dir_full_path)
         except OSError:
             logger.error('Failed to write data into %s', dir_full_path)
-            raise ValueError
+            raise ValueError("Directory is not available.")
 
     for tag in tags:
         if not url_parser.check_domain(url, tag.get(location)):
