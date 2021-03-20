@@ -1,7 +1,7 @@
 import requests
 import os
 import logging
-from requests.exceptions import HTTPError
+from requests.exceptions import RequestException
 from bs4 import BeautifulSoup  # type: ignore
 from page_loader import url_parser  # type: ignore
 from urllib.parse import urljoin
@@ -17,13 +17,9 @@ def download(url: str, output_dir: str) -> str:
         # If the response was successful, no Exception will be raised
         response.raise_for_status()
 
-    except HTTPError as http_err:
-        logger.error('HTTP error occurred: %s', http_err)
-        raise ValueError('HTTP error occurred: {}'.format(http_err))
-
-    except Exception as err:
-        logger.error('Other error occurred: %s', err)
-        raise ValueError('Other error occurred: {}'.format(err))
+    except RequestException as req_err:
+        logger.error('Network error occurred: %s', req_err)
+        raise ValueError('Network error occurred: {}'.format(req_err))
 
     content = response.content
     logger.debug('Full http response body %s', content)
