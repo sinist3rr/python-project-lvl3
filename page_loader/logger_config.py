@@ -1,6 +1,19 @@
-def generate_logger_config(level: str) -> dict:
+import logging
+
+
+class InfoFilter(logging.Filter):
+    def filter(self, rec):
+        return rec.levelno in (logging.DEBUG, logging.INFO)
+
+
+def generate_logger_config(level: int) -> dict:
     logger_config = {
         'version': 1,
+        'filters': {
+            'stdout_filter': {
+                '()': InfoFilter,
+            }
+        },
         'disable_existing_loggers': False,
 
         'formatters': {
@@ -10,21 +23,29 @@ def generate_logger_config(level: str) -> dict:
                 }
             },
         'handlers': {
-            'console': {
+            'console_out': {
                 'class': 'logging.StreamHandler',
+                'filters': ['stdout_filter'],
+                'stream': 'ext://sys.stdout',
                 'level': 'DEBUG',
                 'formatter': 'std_format'
-                }
+                },
+            'console_err': {
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://sys.stderr',
+                'level': 'ERROR',
+                'formatter': 'std_format'
+            }
             },
         'loggers': {
             'page_loader.download_lib': {
                 'level': level,
-                'handlers': ['console']
+                'handlers': ['console_out', 'console_err']
                 # 'propagate': False
                 },
             'urllib3': {
                 'level': level,
-                'handlers': ['console']
+                'handlers': ['console_out', 'console_err']
             }
             },
         }
