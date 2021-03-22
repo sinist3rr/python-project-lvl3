@@ -5,6 +5,7 @@ from requests.exceptions import RequestException
 from bs4 import BeautifulSoup  # type: ignore
 from page_loader import url_parser  # type: ignore
 from urllib.parse import urljoin
+from .errors import AppInternalError
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ def download(url: str, output_dir: str) -> str:
 
     except RequestException as req_err:
         logger.error('Network error occurred: %s', req_err)
-        raise ValueError('Network error occurred: {}'.format(req_err))
+        raise AppInternalError('Network error occurred: {}'.format(req_err))
 
     content = response.content
     logger.debug('Full http response body %s', content)
@@ -36,7 +37,7 @@ def download(url: str, output_dir: str) -> str:
         return complete_path
     except OSError:
         logger.error('Failed to write data into %s', complete_path)
-        raise ValueError("Directory is not available.")
+        raise AppInternalError("Directory is not available.")
 
 
 def find_tags(url: str, output_dir: str, content: object):
@@ -68,7 +69,7 @@ def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
             logger.info('Successfully created directory %s', dir_full_path)
         except OSError:
             logger.error('Failed to write data into %s', dir_full_path)
-            raise ValueError("Directory is not available.")
+            raise AppInternalError("Directory is not available.")
 
     for tag in tags:
         if not url_parser.check_domain(url, tag.get(location)):
