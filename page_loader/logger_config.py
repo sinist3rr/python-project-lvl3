@@ -3,7 +3,7 @@ import logging
 
 class InfoFilter(logging.Filter):
     def filter(self, rec):
-        return rec.levelno in (logging.DEBUG, logging.INFO)
+        return rec.levelno <= logging.INFO
 
 
 def generate_logger_config(level: int) -> dict:
