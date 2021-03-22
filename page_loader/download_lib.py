@@ -23,26 +23,11 @@ def download(url: str, output_dir: str) -> str:
 
     content = response.content
     logger.debug('Full http response body %s', content)
-    soup = BeautifulSoup(content, 'html.parser')
-    logger.debug('Parsed html body %s', soup)
     clean_url = url.strip('/')
     resulting_file_name = url_parser.format_url(clean_url, 'file')
     complete_path = os.path.join(output_dir, resulting_file_name)
 
-    image_tags = soup.findAll('img')
-    link_tags = soup.findAll('link')
-    script_tags = soup.findAll('script')
-
-    logger.debug('All img tags body %s', image_tags)
-    logger.debug('All link tags %s', link_tags)
-    logger.debug('All script %s', script_tags)
-
-    if image_tags:
-        download_res(clean_url, output_dir, image_tags)
-    if link_tags:
-        download_res(clean_url, output_dir, link_tags, 'href')
-    if script_tags:
-        download_res(clean_url, output_dir, script_tags)
+    soup = find_tags(clean_url, output_dir, content)
 
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
@@ -52,6 +37,26 @@ def download(url: str, output_dir: str) -> str:
     except OSError:
         logger.error('Failed to write data into %s', complete_path)
         raise ValueError("Directory is not available.")
+
+
+def find_tags(url: str, output_dir: str, content: object):
+    soup = BeautifulSoup(content, 'html.parser')
+    logger.debug('Parsed html body %s', soup)
+    image_tags = soup.findAll('img')
+    link_tags = soup.findAll('link')
+    script_tags = soup.findAll('script')
+
+    logger.debug('All img tags body %s', image_tags)
+    logger.debug('All link tags %s', link_tags)
+    logger.debug('All script %s', script_tags)
+
+    if image_tags:
+        download_res(url, output_dir, image_tags)
+    if link_tags:
+        download_res(url, output_dir, link_tags, 'href')
+    if script_tags:
+        download_res(url, output_dir, script_tags)
+    return soup
 
 
 def download_res(url: str, output_dir: str, tags: list, location: str = 'src'):
