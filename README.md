@@ -30,3 +30,6 @@ pip install --user git+https://github.com/sinist3rr/python-project-lvl3.git
 **page_loader page verbose**\
 [![page_loader-logger](https://asciinema.org/a/aR4eENKDCQMID9Bo2tpoP1oSF.svg)](https://asciinema.org/a/aR4eENKDCQMID9Bo2tpoP1oSF)
 
+**page_loader page error**\
+[![page_loader-error](https://asciinema.org/a/nOErUQm6Xj4rW04lE0vRrAwb7.svg)](https://asciinema.org/a/nOErUQm6Xj4rW04lE0vRrAwb7)
+
