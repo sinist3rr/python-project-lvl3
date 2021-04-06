@@ -19,7 +19,19 @@ def download(url: str, output_dir: str) -> str:
     clean_url = url.strip('/')
     resulting_file_name = url_parser.format_url(clean_url, 'file')
     complete_path = os.path.join(output_dir, resulting_file_name)
-    all_urls, soup = parse_tags(clean_url, content)
+
+    soup, image_tags, link_tags, script_tags = parse_tags(clean_url, content)
+
+    all_urls: list = []
+    add_to_res_list(image_tags, url, all_urls)
+    add_to_res_list(link_tags, url, all_urls, 'href')
+    add_to_res_list(script_tags, url, all_urls)
+    logger.debug('All urls %s', all_urls)
+
+    change_in_soup(image_tags, url)
+    change_in_soup(link_tags, url, 'href')
+    change_in_soup(script_tags, url)
+
     download_res(url, output_dir, all_urls)
     save_result_html(soup, complete_path)
     return complete_path
@@ -44,21 +56,10 @@ def parse_tags(url: str, content: object) -> tuple:
     image_tags = soup.findAll('img')
     link_tags = soup.findAll('link')
     script_tags = soup.findAll('script')
-
     logger.debug('All img tags body %s', image_tags)
     logger.debug('All link tags %s', link_tags)
     logger.debug('All script %s', script_tags)
-
-    all_urls: list = []
-    add_to_res_list(image_tags, url, all_urls)
-    add_to_res_list(link_tags, url, all_urls, 'href')
-    add_to_res_list(script_tags, url, all_urls)
-    logger.debug('All urls %s', all_urls)
-
-    change_in_soup(image_tags, url)
-    change_in_soup(link_tags, url, 'href')
-    change_in_soup(script_tags, url)
-    return all_urls, soup
+    return soup, image_tags, link_tags, script_tags
 
 
 def add_to_res_list(tags: list, url: str, res_list: list, location: str = 'src') -> list:  # noqa: E501
