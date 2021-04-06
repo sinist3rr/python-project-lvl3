@@ -37,3 +37,11 @@ def check_domain(base_url: str, resource_url: str) -> bool:
         return True
     else:
         return False
+
+
+def check_url_len(tags: list) -> int:
+    return len(max(tags, key=len))
+
+
+def align_url_len(url: str, max_len: int) -> str:
+    return '{}{}'.format(url, (max_len - len(url)) * ' ')
