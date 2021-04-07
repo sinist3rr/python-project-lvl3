@@ -1,6 +1,7 @@
 import re
 import os
 from urllib.parse import urlparse
+from .errors import AppInternalError
 
 
 def format_url(url: str, out_type: str) -> str:
@@ -39,8 +40,10 @@ def check_domain(base_url: str, resource_url: str) -> bool:
         return False
 
 
-def check_url_len(tags: list) -> int:
-    return len(max(tags, key=len))
+def max_url_len(tags: list) -> int:
+    if tags:
+        return len(max(tags, key=len))
+    raise AppInternalError("URL list is empty.")
 
 
 def align_url_len(url: str, max_len: int) -> str:

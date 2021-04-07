@@ -78,8 +78,11 @@ def set_tag_location(tag_name: str) -> str:
 
 
 def download_res(url: str, output_dir: str, all_urls: list):
+    if not all_urls:
+        return
     dir_name = url_parser.format_url(url, 'dir')
     dir_full_path = os.path.join(output_dir, dir_name)
+    max_url = url_parser.max_url_len(all_urls)
     if not os.path.exists(dir_full_path):
         try:
             os.mkdir(dir_full_path)
@@ -100,7 +103,8 @@ def download_res(url: str, output_dir: str, all_urls: list):
             if file_size is None:
                 file_size = '1'
             with open(full_file_path, 'wb') as file:
-                with PixelBar(link, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
+                aligned_url = url_parser.align_url_len(link, max_url)
+                with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
                     for chunk in r.iter_content(chunk_size=8192):
                         file.write(chunk)
                         bar.next(8192)
