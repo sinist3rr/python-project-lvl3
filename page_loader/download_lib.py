@@ -20,18 +20,11 @@ def download(url: str, output_dir: str) -> str:
     resulting_file_name = url_parser.format_url(clean_url, 'file')
     complete_path = os.path.join(output_dir, resulting_file_name)
 
-    soup, image_tags, link_tags, script_tags = parse_tags(clean_url, content)
+    soup, all_tags = parse_tags(content)
 
     all_urls: list = []
-    add_to_res_list(image_tags, url, all_urls)
-    add_to_res_list(link_tags, url, all_urls, 'href')
-    add_to_res_list(script_tags, url, all_urls)
-    logger.debug('All urls %s', all_urls)
-
-    change_in_soup(image_tags, url)
-    change_in_soup(link_tags, url, 'href')
-    change_in_soup(script_tags, url)
-
+    add_to_res_list(all_tags, url, all_urls)
+    change_in_soup(all_tags, url)
     download_res(url, output_dir, all_urls)
     save_result_html(soup, complete_path)
     return complete_path
@@ -50,20 +43,20 @@ def get_http(url: str) -> object:
     return response.content
 
 
-def parse_tags(url: str, content: object) -> tuple:
+def parse_tags(content: object) -> tuple:
     soup = BeautifulSoup(content, 'html.parser')
     logger.debug('Parsed html body %s', soup)
-    image_tags = soup.findAll('img')
-    link_tags = soup.findAll('link')
-    script_tags = soup.findAll('script')
-    logger.debug('All img tags body %s', image_tags)
-    logger.debug('All link tags %s', link_tags)
-    logger.debug('All script %s', script_tags)
-    return soup, image_tags, link_tags, script_tags
+    all_tags = soup.findAll(['img', 'link', 'script'])
+    logger.debug('All tags %s', all_tags)
+    return soup, all_tags
 
 
-def add_to_res_list(tags: list, url: str, res_list: list, location: str = 'src') -> list:  # noqa: E501
+def add_to_res_list(tags: list, url: str, res_list: list) -> list:
     for tag in tags:
+        if tag.name == 'link':
+            location = 'href'
+        else:
+            location = 'src'
         if not url_parser.check_domain(url, tag.get(location)):
             continue
         link = urljoin(url, tag.get(location))
@@ -71,9 +64,13 @@ def add_to_res_list(tags: list, url: str, res_list: list, location: str = 'src')
     return res_list
 
 
-def change_in_soup(tags: list, url: str, location: str = 'src'):
+def change_in_soup(tags: list, url: str):
     dir_name = url_parser.format_url(url, 'dir')
     for tag in tags:
+        if tag.name == 'link':
+            location = 'href'
+        else:
+            location = 'src'
         if not url_parser.check_domain(url, tag.get(location)):
             continue
         link = urljoin(url, tag.get(location))
