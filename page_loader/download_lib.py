@@ -53,10 +53,7 @@ def parse_tags(content: object) -> tuple:
 
 def add_to_res_list(tags: list, url: str, res_list: list) -> list:
     for tag in tags:
-        if tag.name == 'link':
-            location = 'href'
-        else:
-            location = 'src'
+        location = set_tag_location(tag.name)
         if not url_parser.check_domain(url, tag.get(location)):
             continue
         link = urljoin(url, tag.get(location))
@@ -67,16 +64,17 @@ def add_to_res_list(tags: list, url: str, res_list: list) -> list:
 def change_in_soup(tags: list, url: str):
     dir_name = url_parser.format_url(url, 'dir')
     for tag in tags:
-        if tag.name == 'link':
-            location = 'href'
-        else:
-            location = 'src'
+        location = set_tag_location(tag.name)
         if not url_parser.check_domain(url, tag.get(location)):
             continue
         link = urljoin(url, tag.get(location))
         res_name = url_parser.format_url(link, 'file')
         res_file_path = '{}/{}'.format(dir_name, res_name)
         tag[location] = res_file_path
+
+
+def set_tag_location(tag_name: str) -> str:
+    return 'href' if tag_name == 'link' else 'src'
 
 
 def download_res(url: str, output_dir: str, all_urls: list):
