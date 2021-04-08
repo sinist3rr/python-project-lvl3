@@ -7,7 +7,6 @@ import requests
 import tempfile
 import os
 import page_loader
-import re
 
 
 @pytest.mark.parametrize(
@@ -33,8 +32,7 @@ def test_page_loader(requests_mock, url, result):
 
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         requests_mock.get(url, text=result_file)
-        tmp_output = page_loader.download(url, tmp_dir_name)
-        tmp_path = re.findall(r'"([^"]*)"', tmp_output)[0]
+        tmp_path = page_loader.download(url, tmp_dir_name)
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
 

@@ -29,7 +29,7 @@ def download(url: str, output_dir: str, threads: int = 1) -> str:
     dir_full_path = create_res_dir(url, output_dir, all_urls)
     run_download_res(dir_full_path, all_urls, threads)
     save_result_html(soup, complete_path)
-    return 'Page was downloaded into "{}"'.format(complete_path)
+    return complete_path
 
 
 def get_http(url: str) -> object:
