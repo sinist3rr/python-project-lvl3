@@ -14,13 +14,6 @@ def prompt_args():
                         help="output dir",
                         dest='output'
                         )
-    parser.add_argument('-t',
-                        '--threads [number]',
-                        default=1,
-                        help="threads number",
-                        dest='threads',
-                        type=int
-                        )
     parser.add_argument('--verbose',
                         '-v',
                         action='count',

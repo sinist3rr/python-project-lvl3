@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 logger = logging.getLogger(__name__)
 
 
-def download(url: str, output_dir: str, threads: int = 1) -> str:
+def download(url: str, output_dir: str) -> str:
     content = get_http(url)
     logger.debug('Full http response body %s', content)
 
@@ -27,7 +27,7 @@ def download(url: str, output_dir: str, threads: int = 1) -> str:
     add_to_res_list(all_tags, url, all_urls)
     change_in_soup(all_tags, url)
     dir_full_path = create_res_dir(url, output_dir, all_urls)
-    run_download_res(dir_full_path, all_urls, threads)
+    run_download_res(dir_full_path, all_urls)
     save_result_html(soup, complete_path)
     return complete_path
 
@@ -94,12 +94,12 @@ def create_res_dir(url: str, output_dir: str, all_urls: list):
     return dir_full_path
 
 
-def run_download_res(dir_full_path: str, all_urls: list, threads: int):
+def run_download_res(dir_full_path: str, all_urls: list):
     if not all_urls:
         return
     max_url = url_parser.max_url_len(all_urls)
 
-    with ThreadPoolExecutor(max_workers=threads) as executor:
+    with ThreadPoolExecutor() as executor:
         for link in all_urls:
             res_name = url_parser.format_url(link, 'file')
             full_file_path = '{}/{}'.format(dir_full_path, res_name)
