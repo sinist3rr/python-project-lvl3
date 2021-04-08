@@ -25,7 +25,8 @@ def download(url: str, output_dir: str) -> str:
     all_urls: list = []
     add_to_res_list(all_tags, url, all_urls)
     change_in_soup(all_tags, url)
-    download_res(url, output_dir, all_urls)
+    dir_full_path = create_res_dir(url, output_dir, all_urls)
+    run_download_res(dir_full_path, all_urls)
     save_result_html(soup, complete_path)
     return complete_path
 
@@ -77,12 +78,11 @@ def set_tag_location(tag_name: str) -> str:
     return 'href' if tag_name == 'link' else 'src'
 
 
-def download_res(url: str, output_dir: str, all_urls: list):
+def create_res_dir(url: str, output_dir: str, all_urls: list):
     if not all_urls:
         return
     dir_name = url_parser.format_url(url, 'dir')
     dir_full_path = os.path.join(output_dir, dir_name)
-    max_url = url_parser.max_url_len(all_urls)
     if not os.path.exists(dir_full_path):
         try:
             os.mkdir(dir_full_path)
@@ -90,24 +90,34 @@ def download_res(url: str, output_dir: str, all_urls: list):
         except OSError:
             logger.error('Failed to write data into %s', dir_full_path)
             raise AppInternalError("Directory is not available.")
+    return dir_full_path
+
+
+def run_download_res(dir_full_path: str, all_urls: list):
+    if not all_urls:
+        return
+    max_url = url_parser.max_url_len(all_urls)
 
     for link in all_urls:
         res_name = url_parser.format_url(link, 'file')
         full_file_path = '{}/{}'.format(dir_full_path, res_name)
+        save_resource(link, max_url, full_file_path)
 
-        with requests.get(link, stream=True) as r:
-            r.raise_for_status()
-            logger.info('Saving file %s', full_file_path)
-            file_size = requests.get(link, stream=True).headers.get('Content-length')  # noqa: E501
 
-            if file_size is None:
-                file_size = '1'
-            with open(full_file_path, 'wb') as file:
-                aligned_url = url_parser.align_url_len(link, max_url)
-                with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
-                    for chunk in r.iter_content(chunk_size=8192):
-                        file.write(chunk)
-                        bar.next(8192)
+def save_resource(link: str, max_url: int, path: str):
+    with requests.get(link, stream=True) as r:
+        r.raise_for_status()
+        logger.info('Saving file %s', path)
+        file_size = requests.get(link, stream=True).headers.get('Content-length')  # noqa: E501
+        logger.info('File size %s', file_size)
+        if file_size is None:
+            file_size = '1'
+        with open(path, 'wb') as file:
+            aligned_url = url_parser.align_url_len(link, max_url)
+            with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
+                for chunk in r.iter_content(chunk_size=8192):
+                    file.write(chunk)
+                    bar.next(8192)
 
 
 def save_result_html(soup: BeautifulSoup, complete_path: str):
