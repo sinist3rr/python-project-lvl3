@@ -64,4 +64,4 @@ def test_page_loader(requests_mock):
         with open(tmp_path) as tmp_html_file:
             tmp_html_result_file = tmp_html_file.read()
 
-    assert tmp_html_result_file == str(soup)
+    assert tmp_html_result_file == str(soup.prettify(formatter='html'))
