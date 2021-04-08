@@ -125,7 +125,7 @@ def save_resource(link: str, max_url: int, path: str):
 def save_result_html(soup: BeautifulSoup, complete_path: str):
     try:
         with open(complete_path, "w", encoding='utf-8') as file:
-            file.write(str(soup.prettify(formatter='html')))
+            file.write(str(soup.prettify(formatter='html5')))
             logger.info('Successfully save file %s', complete_path)
     except OSError:
         logger.error('Failed to write data into %s', complete_path)
