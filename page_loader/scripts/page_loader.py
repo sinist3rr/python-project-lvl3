@@ -20,7 +20,7 @@ def main():
     logging.config.dictConfig(generate_logger_config(log_levels[args.verbosity]))  # noqa: E501
 
     try:
-        print(download(args.url, args.output))
+        print(download(args.url, args.output, args.threads))
         sys.exit(0)
     except AppInternalError:
         sys.exit(1)
