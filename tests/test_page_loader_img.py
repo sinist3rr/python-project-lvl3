@@ -6,6 +6,7 @@ import pytest
 import tempfile
 import filecmp
 import page_loader
+import re
 from bs4 import BeautifulSoup
 
 
@@ -44,7 +45,8 @@ def test_page_loader(requests_mock):
         requests_mock.get('https://digital.ai/css/css_Tz2Slcsk93w.css', content=css_file)
         requests_mock.get('https://digital.ai/js/js_Foa5XQDLxY.js', content=js_file)
 
-        tmp_path = page_loader.download(url, tmp_dir_name)
+        tmp_output = page_loader.download(url, tmp_dir_name)
+        tmp_path = re.findall(r'"([^"]*)"', tmp_output)[0]
 
         for image in images:
             assert filecmp.cmp('tests/fixtures/img/{}'.format(image),
