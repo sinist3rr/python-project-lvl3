@@ -34,7 +34,7 @@ def check_domain(base_url: str, resource_url: str) -> bool:
 
     if resource_domain is None or main_domain is None:
         return True
-    elif resource_domain.endswith(main_domain):
+    elif resource_domain == main_domain:
         return True
     else:
         return False
