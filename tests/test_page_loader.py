@@ -3,7 +3,6 @@
 """Various page_loader tests."""
 
 import pytest
-import requests
 import tempfile
 import os
 import page_loader

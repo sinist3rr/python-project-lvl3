@@ -2,7 +2,6 @@
 
 """Various page_loader tests."""
 
-import pytest
 import tempfile
 import filecmp
 import page_loader
