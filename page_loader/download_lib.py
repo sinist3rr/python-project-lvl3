@@ -24,8 +24,9 @@ def download(url: str, output_dir: str) -> str:
 
     all_urls = add_to_res_list(all_tags, url)
     change_in_soup(all_tags, url)
-    dir_full_path = create_res_dir(url, output_dir, all_urls)
-    run_download_res(dir_full_path, all_urls)
+    if all_urls:
+        dir_full_path = create_res_dir(url, output_dir)
+        run_download_res(dir_full_path, all_urls)
     save_result_html(soup, complete_path)
     return complete_path
 
@@ -78,9 +79,7 @@ def get_tag_location(tag_name: str) -> str:
     return 'href' if tag_name == 'link' else 'src'
 
 
-def create_res_dir(url: str, output_dir: str, all_urls: list):
-    if not all_urls:
-        return
+def create_res_dir(url: str, output_dir: str):
     dir_name = url_parser.format_url(url, 'dir')
     dir_full_path = os.path.join(output_dir, dir_name)
     if not os.path.exists(dir_full_path):
@@ -94,8 +93,6 @@ def create_res_dir(url: str, output_dir: str, all_urls: list):
 
 
 def run_download_res(dir_full_path: str, all_urls: list):
-    if not all_urls:
-        return
     max_url = url_parser.max_url_len(all_urls)
 
     with ThreadPoolExecutor() as executor:
