@@ -18,7 +18,7 @@ def format_url(url: str, out_type: str) -> str:
     elif out_type == 'dir':
         return '{}{}'.format(formatted_url, '_files')
     else:
-        return 'Wrong type - {}'.format(out_type)
+        raise AppInternalError('Wrong type - {}'.format(out_type))
 
 
 def replace_to_dash(url: str) -> str:
