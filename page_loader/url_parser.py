@@ -22,8 +22,7 @@ def format_url(url: str, out_type: str) -> str:
 
 
 def replace_to_dash(url: str) -> str:
-    pattern = re.compile('[^a-zA-Z0-9]')
-    return re.sub(pattern, '-', url)
+    return re.sub(r'[^a-zA-Z0-9]', '-', url)
 
 
 def check_domain(base_url: str, resource_url: str) -> bool:
