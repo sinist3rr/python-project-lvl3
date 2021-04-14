@@ -4,21 +4,25 @@ from urllib.parse import urlparse
 from .errors import AppInternalError
 
 
-def format_url(url: str, out_type: str) -> str:
+def format_file_url(url: str) -> str:
+    formatted_url, ext = format_url(url)
+    if not ext:
+        ext = '.html'
+    return '{}{}'.format(formatted_url, ext)
+
+
+def format_dir_url(url: str) -> str:
+    formatted_url, _ = format_url(url)
+    return '{}{}'.format(formatted_url, '_files')
+
+
+def format_url(url: str) -> tuple:
     clean_url = url.strip('/')
     domain = urlparse(clean_url).netloc
     path = urlparse(clean_url).path
     req, ext = os.path.splitext(path)
     formatted_url = replace_to_dash('{}{}'.format(domain, req))
-
-    if out_type == 'file':
-        if not ext:
-            ext = '.html'
-        return '{}{}'.format(formatted_url, ext)
-    elif out_type == 'dir':
-        return '{}{}'.format(formatted_url, '_files')
-    else:
-        raise AppInternalError('Wrong type - {}'.format(out_type))
+    return formatted_url, ext
 
 
 def replace_to_dash(url: str) -> str:

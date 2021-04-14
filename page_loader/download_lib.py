@@ -17,7 +17,7 @@ def download(url: str, output_dir: str) -> str:
     content = get_http(url)
     logger.debug('Full http response body %s', content)
 
-    resulting_file_name = url_parser.format_url(url, 'file')
+    resulting_file_name = url_parser.format_file_url(url)
     complete_path = os.path.join(output_dir, resulting_file_name)
 
     soup, all_tags = parse_tags(content)
@@ -64,13 +64,13 @@ def add_to_res_list(tags: list, url: str) -> list:
 
 
 def change_in_soup(tags: list, url: str):
-    dir_name = url_parser.format_url(url, 'dir')
+    dir_name = url_parser.format_dir_url(url)
     for tag in tags:
         location = get_tag_location(tag.name)
         if not url_parser.check_domain(url, tag.get(location)):
             continue
         link = urljoin(url, tag.get(location))
-        res_name = url_parser.format_url(link, 'file')
+        res_name = url_parser.format_file_url(link)
         res_file_path = '{}/{}'.format(dir_name, res_name)
         tag[location] = res_file_path
 
@@ -80,7 +80,7 @@ def get_tag_location(tag_name: str) -> str:
 
 
 def create_res_dir(url: str, output_dir: str):
-    dir_name = url_parser.format_url(url, 'dir')
+    dir_name = url_parser.format_dir_url(url)
     dir_full_path = os.path.join(output_dir, dir_name)
     if not os.path.exists(dir_full_path):
         try:
@@ -97,7 +97,7 @@ def run_download_res(dir_full_path: str, all_urls: list):
 
     with ThreadPoolExecutor() as executor:
         for link in all_urls:
-            res_name = url_parser.format_url(link, 'file')
+            res_name = url_parser.format_file_url(link)
             full_file_path = '{}/{}'.format(dir_full_path, res_name)
             executor.submit(save_resource, link=link, max_url=max_url, path=full_file_path)  # noqa: E501
 
