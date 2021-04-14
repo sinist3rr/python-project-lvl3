@@ -6,7 +6,7 @@ class InfoFilter(logging.Filter):
         return rec.levelno <= logging.INFO
 
 
-def generate_logger_config(level: int) -> dict:
+def generate(level: int) -> dict:
     logger_config = {
         'version': 1,
         'filters': {
