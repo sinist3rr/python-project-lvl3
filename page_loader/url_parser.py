@@ -5,8 +5,9 @@ from .errors import AppInternalError
 
 
 def format_url(url: str, out_type: str) -> str:
-    domain = urlparse(url).netloc
-    path = urlparse(url).path
+    clean_url = url.strip('/')
+    domain = urlparse(clean_url).netloc
+    path = urlparse(clean_url).path
     req, ext = os.path.splitext(path)
     formatted_url = replace_to_dash('{}{}'.format(domain, req))
 

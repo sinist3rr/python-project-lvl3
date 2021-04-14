@@ -17,8 +17,7 @@ def download(url: str, output_dir: str) -> str:
     content = get_http(url)
     logger.debug('Full http response body %s', content)
 
-    clean_url = url.strip('/')
-    resulting_file_name = url_parser.format_url(clean_url, 'file')
+    resulting_file_name = url_parser.format_url(url, 'file')
     complete_path = os.path.join(output_dir, resulting_file_name)
 
     soup, all_tags = parse_tags(content)
