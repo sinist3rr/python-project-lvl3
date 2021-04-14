@@ -40,7 +40,7 @@ def get_http(url: str) -> object:
 
     except RequestException as req_err:
         logger.error('Network error occurred: %s', req_err)
-        raise AppInternalError('Network error occurred: {}'.format(req_err))
+        raise AppInternalError from req_err
     return response.content
 
 
@@ -87,9 +87,9 @@ def create_res_dir(url: str, output_dir: str, all_urls: list):
         try:
             os.mkdir(dir_full_path)
             logger.info('Successfully created directory %s', dir_full_path)
-        except OSError:
+        except OSError as os_err:
             logger.error('Failed to write data into %s', dir_full_path)
-            raise AppInternalError("Directory is not available.")
+            raise AppInternalError from os_err
     return dir_full_path
 
 
@@ -126,6 +126,6 @@ def save_result_html(soup: BeautifulSoup, complete_path: str):
         with open(complete_path, "w", encoding='utf-8') as file:
             file.write(str(soup.prettify(formatter='html5')))
             logger.info('Successfully save file %s', complete_path)
-    except OSError:
+    except OSError as os_err:
         logger.error('Failed to write data into %s', complete_path)
-        raise AppInternalError("Directory is not available.")
+        raise AppInternalError from os_err
