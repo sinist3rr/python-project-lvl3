@@ -18,7 +18,7 @@ def main():
 
     args = prompt_args().parse_args()
     logging.config.dictConfig(
-        generate_logger_config(log_levels[args.verbosity])
+        generate_logger_config(log_levels.get(args.verbosity))
     )
 
     try:
