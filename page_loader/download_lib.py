@@ -84,7 +84,7 @@ def create_res_dir(url: str, output_dir: str):
     dir_name = url_parser.format_dir_url(url)
     dir_full_path = os.path.join(output_dir, dir_name)
     try:
-        Path(dir_full_path).mkdir(parents=True, exist_ok=False)
+        Path(dir_full_path).mkdir(parents=False, exist_ok=True)
         logger.info('Successfully created directory %s', dir_full_path)
     except OSError as os_err:
         logger.error('Failed to write data into %s', dir_full_path)
