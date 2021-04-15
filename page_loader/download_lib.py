@@ -106,10 +106,8 @@ def save_resource(link: str, max_url: int, path: str):
     with requests.get(link, stream=True) as r:
         r.raise_for_status()
         logger.info('Saving file %s', path)
-        file_size = r.headers.get('Content-length')
+        file_size = r.headers.get('Content-length', 1)
         logger.info('File size %s', file_size)
-        if file_size is None:
-            file_size = '1'
         with open(path, 'wb') as file:
             aligned_url = url_parser.align_url_len(link, max_url)
             with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
