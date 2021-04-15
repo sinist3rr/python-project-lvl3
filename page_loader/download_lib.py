@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 from .errors import AppInternalError
 from progress.bar import PixelBar  # type: ignore
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 
 logger = logging.getLogger(__name__)
@@ -82,13 +83,12 @@ def get_tag_location(tag_name: str) -> str:
 def create_res_dir(url: str, output_dir: str):
     dir_name = url_parser.format_dir_url(url)
     dir_full_path = os.path.join(output_dir, dir_name)
-    if not os.path.exists(dir_full_path):
-        try:
-            os.mkdir(dir_full_path)
-            logger.info('Successfully created directory %s', dir_full_path)
-        except OSError as os_err:
-            logger.error('Failed to write data into %s', dir_full_path)
-            raise AppInternalError from os_err
+    try:
+        Path(dir_full_path).mkdir(parents=True, exist_ok=True)
+        logger.info('Successfully created directory %s', dir_full_path)
+    except OSError as os_err:
+        logger.error('Failed to write data into %s', dir_full_path)
+        raise AppInternalError from os_err
     return dir_full_path
 
 
