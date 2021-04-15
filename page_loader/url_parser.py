@@ -51,4 +51,4 @@ def max_url_len(tags: list) -> int:
 
 
 def align_url_len(url: str, max_len: int) -> str:
-    return '{}{}'.format(url, (max_len - len(url)) * ' ')
+    return url.ljust(max_len)
