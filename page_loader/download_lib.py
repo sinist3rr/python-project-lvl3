@@ -106,7 +106,7 @@ def save_resource(link: str, max_url: int, path: str):
     with requests.get(link, stream=True) as r:
         r.raise_for_status()
         logger.info('Saving file %s', path)
-        file_size = requests.get(link, stream=True).headers.get('Content-length')  # noqa: E501
+        file_size = r.headers.get('Content-length')
         logger.info('File size %s', file_size)
         if file_size is None:
             file_size = '1'
