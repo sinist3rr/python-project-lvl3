@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 logger = logging.getLogger(__name__)
+CHUNK_SIZE = 8192
 
 
 def download(url: str, output_dir: str) -> str:
@@ -111,9 +112,9 @@ def save_resource(link: str, max_url: int, path: str):
         with open(path, 'wb') as file:
             aligned_url = url_parser.align_url_len(link, max_url)
             with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
-                for chunk in r.iter_content(chunk_size=8192):
+                for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
                     file.write(chunk)
-                    bar.next(8192)
+                    bar.next(CHUNK_SIZE)
 
 
 def save_result_html(soup: BeautifulSoup, complete_path: str):
