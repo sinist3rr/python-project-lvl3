@@ -3,8 +3,8 @@
 import logging.config
 import sys
 import page_loader.logger_config
+import page_loader.cli
 from page_loader import download
-from page_loader.cli import prompt_args
 from page_loader.errors import AppInternalError
 
 
@@ -16,7 +16,7 @@ def main():
         3: logging.DEBUG,
     }
 
-    args = prompt_args().parse_args()
+    args = page_loader.cli.prompt_args().parse_args()
     logging.config.dictConfig(
         page_loader.logger_config.generate(log_levels.get(args.verbosity))
     )
