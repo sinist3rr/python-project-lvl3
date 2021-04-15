@@ -5,7 +5,7 @@ import page_loader.page_parser
 import page_loader.resource_handler
 from requests.exceptions import RequestException
 from page_loader import url_parser  # type: ignore
-from .errors import AppInternalError
+from .errors import NetworkError
 
 
 logger = logging.getLogger(__name__)
@@ -39,5 +39,5 @@ def get_http(url: str) -> object:
 
     except RequestException as req_err:
         logger.error('Network error occurred: %s', req_err)
-        raise AppInternalError from req_err
+        raise NetworkError from req_err
     return response.content

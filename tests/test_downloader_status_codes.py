@@ -5,7 +5,7 @@
 import pytest
 import tempfile
 import page_loader
-from page_loader.errors import AppInternalError
+from page_loader.errors import NetworkError
 
 
 @pytest.mark.parametrize(
@@ -26,5 +26,5 @@ from page_loader.errors import AppInternalError
 )
 def test_downloader_codes(url, result):
     with tempfile.TemporaryDirectory() as tmp_dir_name:
-        with pytest.raises(AppInternalError):
+        with pytest.raises(NetworkError):
             page_loader.download(url, tmp_dir_name)

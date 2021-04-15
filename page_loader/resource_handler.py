@@ -2,7 +2,7 @@ import requests
 import logging
 import os
 from page_loader import url_parser
-from .errors import AppInternalError
+from .errors import FileError
 from pathlib import Path
 from progress.bar import PixelBar  # type: ignore
 from concurrent.futures import ThreadPoolExecutor
@@ -21,7 +21,7 @@ def create_res_dir(url: str, output_dir: str):
         logger.info('Successfully created directory %s', dir_full_path)
     except OSError as os_err:
         logger.error('Failed to write data into %s', dir_full_path)
-        raise AppInternalError from os_err
+        raise FileError from os_err
     return dir_full_path
 
 
@@ -56,4 +56,4 @@ def save_result_html(soup: BeautifulSoup, complete_path: str):
             logger.info('Successfully save file %s', complete_path)
     except OSError as os_err:
         logger.error('Failed to write data into %s', complete_path)
-        raise AppInternalError from os_err
+        raise FileError from os_err
