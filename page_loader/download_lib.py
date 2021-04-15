@@ -1,10 +1,10 @@
 import requests
 import os
 import logging
+import page_loader.page_parser
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup  # type: ignore
 from page_loader import url_parser  # type: ignore
-from urllib.parse import urljoin
 from .errors import AppInternalError
 from progress.bar import PixelBar  # type: ignore
 from concurrent.futures import ThreadPoolExecutor
@@ -22,11 +22,11 @@ def download(url: str, output_dir: str) -> str:
     resulting_file_name = url_parser.format_file_url(url)
     complete_path = os.path.join(output_dir, resulting_file_name)
 
-    soup, all_tags = parse_tags(content)
-    local_tags = get_local_tags(all_tags, url)
+    soup, all_tags = page_loader.page_parser.parse_tags(content)
+    local_tags = page_loader.page_parser.get_local_tags(all_tags, url)
 
-    all_urls = add_to_res_list(local_tags, url)
-    change_in_soup(local_tags, url)
+    all_urls = page_loader.page_parser.add_to_res_list(local_tags, url)
+    page_loader.page_parser.change_in_soup(local_tags, url)
     if all_urls:
         dir_full_path = create_res_dir(url, output_dir)
         run_download_res(dir_full_path, all_urls)
@@ -45,47 +45,6 @@ def get_http(url: str) -> object:
         logger.error('Network error occurred: %s', req_err)
         raise AppInternalError from req_err
     return response.content
-
-
-def parse_tags(content: object) -> tuple:
-    soup = BeautifulSoup(content, 'html.parser')
-    logger.debug('Parsed html body %s', soup)
-    all_tags = soup.findAll(['img', 'link', 'script'])
-    logger.debug('All tags %s', all_tags)
-    return soup, all_tags
-
-
-def get_local_tags(tags: list, url: str) -> list:
-    local_tags = []
-    for tag in tags:
-        location = get_tag_location(tag.name)
-        if not url_parser.check_domain(url, tag.get(location)):
-            continue
-        local_tags.append(tag)
-    return local_tags
-
-
-def add_to_res_list(tags: list, url: str) -> list:
-    res_list = []
-    for tag in tags:
-        location = get_tag_location(tag.name)
-        link = urljoin(url, tag.get(location))
-        res_list.append(link)
-    return res_list
-
-
-def change_in_soup(tags: list, url: str):
-    dir_name = url_parser.format_dir_url(url)
-    for tag in tags:
-        location = get_tag_location(tag.name)
-        link = urljoin(url, tag.get(location))
-        res_name = url_parser.format_file_url(link)
-        res_file_path = os.path.join(dir_name, res_name)
-        tag[location] = res_file_path
-
-
-def get_tag_location(tag_name: str) -> str:
-    return 'href' if tag_name == 'link' else 'src'
 
 
 def create_res_dir(url: str, output_dir: str):
