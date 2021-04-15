@@ -71,7 +71,7 @@ def change_in_soup(tags: list, url: str):
             continue
         link = urljoin(url, tag.get(location))
         res_name = url_parser.format_file_url(link)
-        res_file_path = '{}/{}'.format(dir_name, res_name)
+        res_file_path = os.path.join(dir_name, res_name)
         tag[location] = res_file_path
 
 
@@ -98,7 +98,7 @@ def run_download_res(dir_full_path: str, all_urls: list):
     with ThreadPoolExecutor() as executor:
         for link in all_urls:
             res_name = url_parser.format_file_url(link)
-            full_file_path = '{}/{}'.format(dir_full_path, res_name)
+            full_file_path = os.path.join(dir_full_path, res_name)
             executor.submit(save_resource, link=link, max_url=max_url, path=full_file_path)  # noqa: E501
 
 
