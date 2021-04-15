@@ -22,6 +22,7 @@ def test_page_loader(requests_mock):
         'terraform.png',
         'vagrant.png'
     )
+    resources = ('css/css_Tz2Slcsk93w.css', 'js/js_Foa5XQDLxY.js')
 
     with open('tests/fixtures/digital-ai-img-before.html') as fp:
         original_file = fp.read()
@@ -36,12 +37,10 @@ def test_page_loader(requests_mock):
                 img_file = im.read()
             requests_mock.get('https://digital.ai/devops-tool-chest/img/{}'.format(image), content=img_file)
 
-        with open('tests/fixtures/css/css_Tz2Slcsk93w.css', "rb") as css:
-            css_file = css.read()
-        with open('tests/fixtures/js/js_Foa5XQDLxY.js', "rb") as js:
-            js_file = js.read()
-        requests_mock.get('https://digital.ai/css/css_Tz2Slcsk93w.css', content=css_file)
-        requests_mock.get('https://digital.ai/js/js_Foa5XQDLxY.js', content=js_file)
+        for res in resources:
+            with open('tests/fixtures/{}'.format(res), "rb") as file:
+                res_file = file.read()
+            requests_mock.get('https://digital.ai/{}'.format(res), content=res_file)
 
         tmp_path = page_loader.download(url, tmp_dir_name)
 
