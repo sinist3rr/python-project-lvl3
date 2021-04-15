@@ -23,9 +23,10 @@ def download(url: str, output_dir: str) -> str:
     complete_path = os.path.join(output_dir, resulting_file_name)
 
     soup, all_tags = parse_tags(content)
+    local_tags = get_local_tags(all_tags, url)
 
-    all_urls = add_to_res_list(all_tags, url)
-    change_in_soup(all_tags, url)
+    all_urls = add_to_res_list(local_tags, url)
+    change_in_soup(local_tags, url)
     if all_urls:
         dir_full_path = create_res_dir(url, output_dir)
         run_download_res(dir_full_path, all_urls)
@@ -54,12 +55,20 @@ def parse_tags(content: object) -> tuple:
     return soup, all_tags
 
 
-def add_to_res_list(tags: list, url: str) -> list:
-    res_list = []
+def get_local_tags(tags: list, url: str) -> list:
+    local_tags = []
     for tag in tags:
         location = get_tag_location(tag.name)
         if not url_parser.check_domain(url, tag.get(location)):
             continue
+        local_tags.append(tag)
+    return local_tags
+
+
+def add_to_res_list(tags: list, url: str) -> list:
+    res_list = []
+    for tag in tags:
+        location = get_tag_location(tag.name)
         link = urljoin(url, tag.get(location))
         res_list.append(link)
     return res_list
@@ -69,8 +78,6 @@ def change_in_soup(tags: list, url: str):
     dir_name = url_parser.format_dir_url(url)
     for tag in tags:
         location = get_tag_location(tag.name)
-        if not url_parser.check_domain(url, tag.get(location)):
-            continue
         link = urljoin(url, tag.get(location))
         res_name = url_parser.format_file_url(link)
         res_file_path = os.path.join(dir_name, res_name)
