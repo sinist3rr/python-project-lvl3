@@ -38,22 +38,10 @@ def generate(level: int) -> dict:
             }
         },
         'loggers': {
-            'page_loader.download_lib': {
+            'root': {
                 'level': level,
                 'handlers': ['console_out', 'console_err']
                 # 'propagate': False
-            },
-            'page_loader.page_parser': {
-                'level': level,
-                'handlers': ['console_out', 'console_err']
-            },
-            'page_loader.resource_handler': {
-                'level': level,
-                'handlers': ['console_out', 'console_err']
-            },
-            'urllib3': {
-                'level': level,
-                'handlers': ['console_out', 'console_err']
             }
         },
     }
