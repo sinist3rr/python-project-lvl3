@@ -1,18 +1,15 @@
-import requests
 import os
 import logging
 import page_loader.page_parser
 import page_loader.resource_handler
-from requests.exceptions import RequestException
 from page_loader import url_parser  # type: ignore
-from .errors import NetworkError
 
 
 logger = logging.getLogger(__name__)
 
 
 def download(url: str, output_dir: str) -> str:
-    content = get_http(url)
+    content = page_loader.resource_handler.get_http(url)
     logger.debug('Full http response body %s', content)
 
     resulting_file_name = url_parser.format_file_url(url)
@@ -28,16 +25,3 @@ def download(url: str, output_dir: str) -> str:
         page_loader.resource_handler.run_download_res(dir_full_path, all_urls)
     page_loader.resource_handler.save_result_html(soup, complete_path)
     return complete_path
-
-
-def get_http(url: str) -> object:
-    try:
-        response = requests.get(url)  # create HTTP response object
-        logger.info('Http response code %s', response.status_code)
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-
-    except RequestException as req_err:
-        logger.error('Network error occurred: %s', req_err)
-        raise NetworkError from req_err
-    return response.content

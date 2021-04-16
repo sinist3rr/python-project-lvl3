@@ -2,15 +2,29 @@ import requests
 import logging
 import os
 from page_loader import url_parser
-from .errors import FileError
+from .errors import FileError, NetworkError
 from pathlib import Path
 from progress.bar import PixelBar  # type: ignore
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup  # type: ignore
+from requests.exceptions import RequestException
 
 
 logger = logging.getLogger(__name__)
 CHUNK_SIZE = 8192
+
+
+def get_http(url: str) -> object:
+    try:
+        response = requests.get(url)  # create HTTP response object
+        logger.info('Http response code %s', response.status_code)
+        # If the response was successful, no Exception will be raised
+        response.raise_for_status()
+
+    except RequestException as req_err:
+        logger.error('Network error occurred: %s', req_err)
+        raise NetworkError from req_err
+    return response.content
 
 
 def create_res_dir(url: str, output_dir: str):
