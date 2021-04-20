@@ -18,10 +18,10 @@ def download(url: str, output_dir: str) -> str:
     soup, all_tags = page_loader.page_parser.parse_tags(webpage_content)
     local_tags = page_loader.page_parser.get_local_tags(all_tags, url)
 
-    all_urls = page_loader.page_parser.add_to_res_list(local_tags, url)
+    resource_urls = page_loader.page_parser.add_to_res_list(local_tags, url)
     page_loader.page_parser.change_in_soup(local_tags, url)
-    if all_urls:
+    if resource_urls:
         dir_full_path = page_loader.resource_handler.create_res_dir(url, output_dir)
-        page_loader.resource_handler.run_download_res(dir_full_path, all_urls)
+        page_loader.resource_handler.run_download_res(dir_full_path, resource_urls)
     page_loader.resource_handler.save_result_html(soup, complete_path)
     return complete_path
