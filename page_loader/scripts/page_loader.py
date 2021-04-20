@@ -16,7 +16,7 @@ def main():
         3: logging.DEBUG,
     }
 
-    args = page_loader.cli.prompt_args().parse_args()
+    args = page_loader.cli.set_args().parse_args()
     logging.config.dictConfig(
         page_loader.logger_config.generate(log_levels.get(args.verbosity))
     )

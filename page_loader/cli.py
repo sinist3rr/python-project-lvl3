@@ -2,7 +2,7 @@ import argparse
 import os
 
 
-def prompt_args():
+def set_args():
     parser = argparse.ArgumentParser(prog='page-loader',
                                      usage='%(prog)s [options] <url>',
                                      description='download html page',
