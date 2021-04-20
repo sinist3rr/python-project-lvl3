@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 
 def download(url: str, output_dir: str) -> str:
-    content = page_loader.resource_handler.get_http(url)
-    logger.debug('Full http response body %s', content)
+    webpage_content = page_loader.resource_handler.get_http(url)
+    logger.debug('Full http response body %s', webpage_content)
 
     resulting_file_name = page_loader.url_parser.format_file_url(url)
     complete_path = os.path.join(output_dir, resulting_file_name)
 
-    soup, all_tags = page_loader.page_parser.parse_tags(content)
+    soup, all_tags = page_loader.page_parser.parse_tags(webpage_content)
     local_tags = page_loader.page_parser.get_local_tags(all_tags, url)
 
     all_urls = page_loader.page_parser.add_to_res_list(local_tags, url)
