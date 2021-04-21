@@ -22,6 +22,6 @@ def download(url: str, output_dir: str) -> str:
     page_loader.page_parser.change_tags_path(local_tags, url)
     if resource_urls:
         dir_full_path = page_loader.resource_handler.create_res_dir(url, output_dir)
-        page_loader.resource_handler.run_download_res(dir_full_path, resource_urls)
+        page_loader.resource_handler.download_resources(dir_full_path, resource_urls)
     page_loader.resource_handler.save_result_html(soup, complete_path)
     return complete_path

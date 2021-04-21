@@ -39,7 +39,7 @@ def create_res_dir(url: str, output_dir: str):
     return dir_full_path
 
 
-def run_download_res(dir_full_path: str, all_urls: list):
+def download_resources(dir_full_path: str, all_urls: list):
     max_url = url_parser.max_url_len(all_urls)
 
     with ThreadPoolExecutor() as executor:
