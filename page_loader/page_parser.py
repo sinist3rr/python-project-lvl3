@@ -35,7 +35,7 @@ def get_urls_list(tags: list, url: str) -> list:
     return res_list
 
 
-def change_in_soup(tags: list, url: str):
+def change_tags_path(tags: list, url: str):
     dir_name = url_parser.format_dir_url(url)
     for tag in tags:
         location = get_tag_location(tag.name)

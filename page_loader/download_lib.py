@@ -19,7 +19,7 @@ def download(url: str, output_dir: str) -> str:
     local_tags = page_loader.page_parser.get_local_resource_tags(all_tags, url)
 
     resource_urls = page_loader.page_parser.get_urls_list(local_tags, url)
-    page_loader.page_parser.change_in_soup(local_tags, url)
+    page_loader.page_parser.change_tags_path(local_tags, url)
     if resource_urls:
         dir_full_path = page_loader.resource_handler.create_res_dir(url, output_dir)
         page_loader.resource_handler.run_download_res(dir_full_path, resource_urls)
