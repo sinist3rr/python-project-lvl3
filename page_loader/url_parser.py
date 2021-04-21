@@ -29,7 +29,7 @@ def replace_non_alphanum_chars_to_dash(url: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '-', url)
 
 
-def check_domain(base_url: str, resource_url: str) -> bool:
+def is_local_domain(base_url: str, resource_url: str) -> bool:
     if not resource_url:
         return False
 
