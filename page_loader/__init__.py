@@ -1,2 +1,2 @@
-from .download_lib import download  # noqa: F401
+from .downloader import download  # noqa: F401
 __all__ = 'download'

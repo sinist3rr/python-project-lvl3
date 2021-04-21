@@ -1,7 +1,7 @@
 import requests
 import logging
 import os
-from page_loader import url_parser
+from page_loader import urls
 from .errors import FileError, NetworkError
 from pathlib import Path
 from progress.bar import PixelBar  # type: ignore
@@ -28,7 +28,7 @@ def get_http(url: str) -> object:
 
 
 def create_res_dir(url: str, output_dir: str):
-    dir_name = url_parser.format_dir_url(url)
+    dir_name = urls.format_dir_url(url)
     dir_full_path = os.path.join(output_dir, dir_name)
     try:
         Path(dir_full_path).mkdir(parents=False, exist_ok=True)
@@ -40,11 +40,11 @@ def create_res_dir(url: str, output_dir: str):
 
 
 def download_resources(dir_full_path: str, all_urls: list):
-    max_url = url_parser.max_url_len(all_urls)
+    max_url = urls.max_url_len(all_urls)
 
     with ThreadPoolExecutor() as executor:
         for link in all_urls:
-            res_name = url_parser.format_file_url(link)
+            res_name = urls.format_file_url(link)
             full_file_path = os.path.join(dir_full_path, res_name)
             executor.submit(save_resource, link=link, max_url=max_url, path=full_file_path)  # noqa: E501
 
@@ -56,7 +56,7 @@ def save_resource(link: str, max_url: int, path: str):
         file_size = r.headers.get('Content-length', 1)
         logger.info('File size %s', file_size)
         with open(path, 'wb') as file:
-            aligned_url = url_parser.align_url_len(link, max_url)
+            aligned_url = urls.align_url_len(link, max_url)
             with PixelBar(aligned_url, max=int(file_size), suffix='%(percent)d%%') as bar:  # noqa: E501
                 for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
                     file.write(chunk)

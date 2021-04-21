@@ -1,7 +1,7 @@
 import logging
 import os
 from bs4 import BeautifulSoup  # type: ignore
-from page_loader import url_parser  # type: ignore
+from page_loader import urls  # type: ignore
 from urllib.parse import urljoin
 
 
@@ -20,7 +20,7 @@ def get_local_resource_tags(tags: list, url: str) -> list:
     local_tags = []
     for tag in tags:
         location = get_tag_location(tag.name)
-        if not url_parser.is_local_domain(url, tag.get(location)):
+        if not urls.is_local_domain(url, tag.get(location)):
             continue
         local_tags.append(tag)
     return local_tags
@@ -36,11 +36,11 @@ def get_urls_list(tags: list, url: str) -> list:
 
 
 def change_tags_path(tags: list, url: str):
-    dir_name = url_parser.format_dir_url(url)
+    dir_name = urls.format_dir_url(url)
     for tag in tags:
         location = get_tag_location(tag.name)
         link = urljoin(url, tag.get(location))
-        res_name = url_parser.format_file_url(link)
+        res_name = urls.format_file_url(link)
         res_file_path = os.path.join(dir_name, res_name)
         tag[location] = res_file_path
 
