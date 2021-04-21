@@ -16,7 +16,7 @@ def download(url: str, output_dir: str) -> str:
     complete_path = os.path.join(output_dir, resulting_file_name)
 
     soup, all_tags = page_loader.page_parser.parse_resource_tags(webpage_content)
-    local_tags = page_loader.page_parser.get_local_tags(all_tags, url)
+    local_tags = page_loader.page_parser.get_local_resource_tags(all_tags, url)
 
     resource_urls = page_loader.page_parser.add_to_res_list(local_tags, url)
     page_loader.page_parser.change_in_soup(local_tags, url)

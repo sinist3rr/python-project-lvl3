@@ -16,7 +16,7 @@ def parse_resource_tags(content: object) -> tuple:
     return soup, all_tags
 
 
-def get_local_tags(tags: list, url: str) -> list:
+def get_local_resource_tags(tags: list, url: str) -> list:
     local_tags = []
     for tag in tags:
         location = get_tag_location(tag.name)
