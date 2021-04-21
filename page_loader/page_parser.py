@@ -8,7 +8,7 @@ from urllib.parse import urljoin
 logger = logging.getLogger(__name__)
 
 
-def parse_tags(content: object) -> tuple:
+def parse_resource_tags(content: object) -> tuple:
     soup = BeautifulSoup(content, 'html.parser')
     logger.debug('Parsed html body %s', soup)
     all_tags = soup.findAll(['img', 'link', 'script'])
