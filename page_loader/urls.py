@@ -21,11 +21,11 @@ def format_url(url: str) -> tuple:
     domain = urlparse(clean_url).netloc
     path = urlparse(clean_url).path
     req, ext = os.path.splitext(path)
-    formatted_url = replace_non_alphanum_chars_to_dash('{}{}'.format(domain, req))
+    formatted_url = replace_chars_to_dash('{}{}'.format(domain, req))
     return formatted_url, ext
 
 
-def replace_non_alphanum_chars_to_dash(url: str) -> str:
+def replace_chars_to_dash(url: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '-', url)
 
 
