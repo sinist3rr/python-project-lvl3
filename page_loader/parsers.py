@@ -26,7 +26,7 @@ def get_local_resource_tags(tags: list, url: str) -> list:
     return local_tags
 
 
-def get_urls_list(tags: list, url: str) -> list:
+def get_urls(tags: list, url: str) -> list:
     res_list = []
     for tag in tags:
         location = get_tag_location(tag.name)

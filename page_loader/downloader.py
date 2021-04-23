@@ -18,7 +18,7 @@ def download(url: str, output_dir: str) -> str:
     soup, all_tags = page_loader.parsers.parse_resource_tags(webpage_content)
     local_tags = page_loader.parsers.get_local_resource_tags(all_tags, url)
 
-    resource_urls = page_loader.parsers.get_urls_list(local_tags, url)
+    resource_urls = page_loader.parsers.get_urls(local_tags, url)
     page_loader.parsers.change_tags_path(local_tags, url)
     if resource_urls:
         dir_full_path = page_loader.resources.create_res_dir(url, output_dir)
