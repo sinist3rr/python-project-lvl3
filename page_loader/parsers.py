@@ -20,7 +20,7 @@ def get_local_resource_tags(tags: list, url: str) -> list:
     local_tags = []
     for tag in tags:
         location = get_tag_location(tag.name)
-        if not urls.is_local_domain(url, tag.get(location)):
+        if not urls.is_local_resource(url, tag.get(location)):
             continue
         local_tags.append(tag)
     return local_tags
